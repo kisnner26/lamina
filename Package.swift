@@ -11,13 +11,11 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Lamina",
-            resources: [.process("Resources")],
-            swiftSettings: [.defaultIsolation(MainActor.self)]
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "LaminaTests",
-            dependencies: ["Lamina"],
-            swiftSettings: [.defaultIsolation(MainActor.self)]
+            dependencies: ["Lamina"]
         )
     ]
 )
