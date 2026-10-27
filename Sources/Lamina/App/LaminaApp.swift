@@ -4,7 +4,7 @@ import SwiftUI
 struct LaminaApp: App {
     var body: some Scene {
         WindowGroup {
-            Text("Lamina")
+            RootView()
                 .frame(minWidth: 980, minHeight: 680)
         }
         .windowStyle(.hiddenTitleBar)
