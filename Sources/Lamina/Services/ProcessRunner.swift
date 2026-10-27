@@ -8,15 +8,24 @@ actor ProcessRunner {
         standardInput: String? = nil
     ) throws -> ProcessResult {
         let process = Process()
-        let outputPipe = Pipe()
-        let errorPipe = Pipe()
         let inputPipe = Pipe()
+        let logDirectory = FileManager.default.temporaryDirectory
+            .appending(path: "lamina-process-\(UUID().uuidString)", directoryHint: .isDirectory)
+        let outputURL = logDirectory.appending(path: "stdout.log")
+        let errorURL = logDirectory.appending(path: "stderr.log")
+
+        try FileManager.default.createDirectory(at: logDirectory, withIntermediateDirectories: true)
+        _ = FileManager.default.createFile(atPath: outputURL.path, contents: nil)
+        _ = FileManager.default.createFile(atPath: errorURL.path, contents: nil)
+        let outputHandle = try FileHandle(forWritingTo: outputURL)
+        let errorHandle = try FileHandle(forWritingTo: errorURL)
+        defer { try? FileManager.default.removeItem(at: logDirectory) }
 
         process.executableURL = executable
         process.arguments = arguments
         process.currentDirectoryURL = currentDirectory
-        process.standardOutput = outputPipe
-        process.standardError = errorPipe
+        process.standardOutput = outputHandle
+        process.standardError = errorHandle
         process.standardInput = inputPipe
         process.environment = environment()
 
@@ -28,9 +37,11 @@ actor ProcessRunner {
         try? inputPipe.fileHandleForWriting.close()
 
         process.waitUntilExit()
+        try outputHandle.close()
+        try errorHandle.close()
 
-        let output = outputPipe.fileHandleForReading.readDataToEndOfFile()
-        let error = errorPipe.fileHandleForReading.readDataToEndOfFile()
+        let output = try Data(contentsOf: outputURL)
+        let error = try Data(contentsOf: errorURL)
         return ProcessResult(
             exitCode: process.terminationStatus,
             standardOutput: String(decoding: output, as: UTF8.self),
