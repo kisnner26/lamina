@@ -9,15 +9,19 @@ final class ComposerViewModel {
     var instructions = ""
     var provider: AIProvider = .codex
     var generationMode: GenerationMode = .graph
+    var budget: GenerationBudget = .balanced
     var images: [SourceImage] = []
     var status: GenerationStatus = .idle
     var project: PresentationProject?
     var isImporterPresented = false
     var isShowingError = false
     var errorMessage = ""
+    var projectRating: Bool?
+    var layoutIssueSlides: [Int] = []
 
     private let generator: AgentPresentationGenerator
     private let locator: ExecutableLocator
+    private var lastRequest: GenerationRequest?
 
     init(
         generator: AgentPresentationGenerator = AgentPresentationGenerator(),
@@ -63,8 +67,10 @@ final class ComposerViewModel {
                     images: images,
                     provider: provider,
                     mode: generationMode,
+                    budget: budget,
                     outputDirectory: workspace
                 )
+                lastRequest = request
                 let generatedProject = try await generator.generate(request)
                 status = .ready
                 project = generatedProject
@@ -82,6 +88,33 @@ final class ComposerViewModel {
         images = []
         project = nil
         status = .idle
+        projectRating = nil
+        layoutIssueSlides = []
+        lastRequest = nil
+    }
+
+    func regenerateSlide(_ index: Int) {
+        guard let project, let request = lastRequest, !status.isRunning else { return }
+        Task {
+            do {
+                status = .generating(request.provider)
+                self.project = try await generator.regenerateSlide(index, project: project, request: request)
+                status = .ready
+            } catch {
+                status = .failed(error.localizedDescription)
+                present(error)
+            }
+        }
+    }
+
+    func rateProject(positive: Bool) {
+        guard let project else { return }
+        projectRating = positive
+        Task { await generator.rate(project, positive: positive) }
+    }
+
+    func updateLayoutIssues(_ slides: [Int]) {
+        layoutIssueSlides = Array(Set(slides)).sorted()
     }
 
     private var normalizedTitle: String {

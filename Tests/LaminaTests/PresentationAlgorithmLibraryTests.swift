@@ -11,6 +11,7 @@ struct PresentationAlgorithmLibraryTests {
             images: [],
             provider: .codex,
             mode: .graph,
+            budget: .balanced,
             outputDirectory: URL(fileURLWithPath: "/tmp/deck")
         )
 
@@ -27,6 +28,7 @@ struct PresentationAlgorithmLibraryTests {
             images: [],
             provider: .codex,
             mode: .graph,
+            budget: .balanced,
             outputDirectory: URL(fileURLWithPath: "/tmp/deck")
         )
         let algorithm = PresentationAlgorithm(

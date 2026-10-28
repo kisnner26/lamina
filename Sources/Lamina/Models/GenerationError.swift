@@ -4,6 +4,8 @@ enum GenerationError: LocalizedError, Equatable {
     case missingExecutable(AIProvider)
     case emptySource
     case missingAlgorithmLibrary
+    case missingComponentLibrary
+    case missingThemeLibrary
     case agentFailed(provider: AIProvider, details: String)
     case invalidDeck(String)
     case fileOperation(String)
@@ -16,6 +18,10 @@ enum GenerationError: LocalizedError, Equatable {
             "Agrega texto o al menos una imagen como fuente."
         case .missingAlgorithmLibrary:
             "No se pudo cargar la biblioteca de algoritmos de presentación."
+        case .missingComponentLibrary:
+            "No se pudo cargar el catálogo de componentes."
+        case .missingThemeLibrary:
+            "No se pudo cargar el catálogo de temas."
         case .agentFailed(let provider, let details):
             "\(provider.displayName) no pudo terminar la presentación. \(details)"
         case .invalidDeck(let reason):

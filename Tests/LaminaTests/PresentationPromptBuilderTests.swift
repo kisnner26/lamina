@@ -13,16 +13,20 @@ struct PresentationPromptBuilderTests {
             images: [],
             provider: .codex,
             mode: .fullBrief,
+            budget: .balanced,
             outputDirectory: output
         )
 
-        let prompt = PresentationPromptBuilder().build(request: request, stagedImages: [image])
+        let prompt = PresentationPromptBuilder().build(
+            request: request,
+            stagedImages: [image],
+            plan: makePlan(request: request)
+        )
 
-        #expect(prompt.contains("Coffee rituals"))
         #expect(prompt.contains(image.path))
-        #expect(prompt.contains("No external libraries"))
-        #expect(prompt.contains("Do not use a generic"))
-        #expect(prompt.contains("file://"))
+        #expect(prompt.contains("deck.json"))
+        #expect(prompt.contains("Never write index.html"))
+        #expect(!prompt.contains(request.sourceText))
     }
 
     @Test func graphPromptReferencesPlanWithoutRepeatingSource() {
@@ -43,22 +47,44 @@ struct PresentationPromptBuilderTests {
             images: [],
             provider: .codex,
             mode: .graph,
+            budget: .balanced,
             outputDirectory: output
         )
-        let graph = PresentationGraphBuilder().build(request: request, algorithm: algorithm)
-        let plan = GenerationPlan(
-            algorithm: algorithm,
-            graph: graph,
-            sourcePath: "planning/source.md",
-            directionPath: "planning/direction.txt",
-            algorithmPath: "planning/algorithm.json",
-            graphPath: "planning/presentation-graph.json"
-        )
+        let plan = makePlan(request: request, algorithm: algorithm)
 
         let prompt = PresentationPromptBuilder().build(request: request, stagedImages: [], plan: plan)
 
         #expect(prompt.contains("planning/presentation-graph.json"))
         #expect(!prompt.contains(request.sourceText))
-        #expect(prompt.count < 2_000)
+        #expect(prompt.count < 3_200)
+    }
+
+    private func makePlan(
+        request: GenerationRequest,
+        algorithm: PresentationAlgorithm? = nil
+    ) -> GenerationPlan {
+        let selected = algorithm ?? PresentationAlgorithm(
+            id: "narrative-arc",
+            name: "narrative",
+            summary: "",
+            keywords: [],
+            slideRoles: ["hook", "close"],
+            mechanisms: ["hero", "callback"],
+            constraints: []
+        )
+        return GenerationPlan(
+            algorithm: selected,
+            graph: PresentationGraphBuilder().build(request: request, algorithm: selected),
+            sourcePath: "planning/source.md",
+            directionPath: "planning/direction.txt",
+            algorithmPath: "planning/algorithm.json",
+            graphPath: "planning/presentation-graph.json",
+            factsPath: "planning/facts.json",
+            componentsPath: "planning/components.json",
+            themesPath: "planning/themes.json",
+            components: [],
+            themes: [],
+            facts: []
+        )
     }
 }

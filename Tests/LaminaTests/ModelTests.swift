@@ -11,6 +11,7 @@ struct ModelTests {
             images: [],
             provider: .codex,
             mode: .graph,
+            budget: .balanced,
             outputDirectory: URL(fileURLWithPath: "/tmp/deck")
         )
 
