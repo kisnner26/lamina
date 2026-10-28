@@ -34,24 +34,24 @@ struct PreviewToolbarView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
-                if let project, project.slideCount > 0 {
-                    Menu("repair slide", systemImage: "wrench.and.screwdriver") {
-                        ForEach(0..<project.slideCount, id: \.self) { index in
-                            Button("slide \(index + 1)") { onRegenerate(index) }
+                Menu("deck tools", systemImage: "ellipsis.circle") {
+                    if let project, project.slideCount > 0 {
+                        Menu("repair slide", systemImage: "wrench.and.screwdriver") {
+                            ForEach(0..<project.slideCount, id: \.self) { index in
+                                Button("slide \(index + 1)") { onRegenerate(index) }
+                            }
                         }
                     }
+                    Divider()
+                    Button("worked well", systemImage: rating == true ? "hand.thumbsup.fill" : "hand.thumbsup") {
+                        onRate(true)
+                    }
+                    Button("needs work", systemImage: rating == false ? "hand.thumbsdown.fill" : "hand.thumbsdown") {
+                        onRate(false)
+                    }
+                    Divider()
+                    Button("show in finder", systemImage: "folder", action: onReveal)
                 }
-                Button("worked well", systemImage: rating == true ? "hand.thumbsup.fill" : "hand.thumbsup") {
-                    onRate(true)
-                }
-                .labelStyle(.iconOnly)
-                .help("mark this generation as successful")
-                Button("needs work", systemImage: rating == false ? "hand.thumbsdown.fill" : "hand.thumbsdown") {
-                    onRate(false)
-                }
-                .labelStyle(.iconOnly)
-                .help("lower this pattern's future priority")
-                Button("show in finder", systemImage: "folder", action: onReveal)
                 Button("new presentation", systemImage: "plus", action: onReset)
             }
         }
