@@ -68,6 +68,8 @@ actor AgentPresentationGenerator {
                 "exec",
                 "--skip-git-repo-check",
                 "--ephemeral",
+                "--ignore-user-config",
+                "--ignore-rules",
                 "--sandbox", "workspace-write",
                 "--color", "never",
                 "-C", directory.path
