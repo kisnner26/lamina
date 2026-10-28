@@ -18,6 +18,8 @@ native macos presentation engine that turns text and images into original, offli
 - asks the agent for compact deck ir instead of regenerated html, css, and javascript
 - compiles slides locally from reusable components and theme parameters
 - caches unchanged slide fragments and can repair one slide at a time
+- searches and freezes licensed images, gif, and video from wikimedia commons
+- edits deck text and visual placement directly in the native preview
 
 ## requirements
 
@@ -76,6 +78,16 @@ the compiler stores hashes and rendered slide fragments in `.lamina-cache/`. rep
 
 successful component combinations are stored locally in application support. explicit positive or negative feedback changes which patterns are retrieved for later presentations using the same narrative algorithm.
 
+## visual quality
+
+lamina includes two visual grammars extracted from presentation systems that already worked in production: cinematic documentary and editorial duel. a grammar controls photographic dominance, typography behavior, composition rhythm, media selection, and subject-specific motion. it guides the agent beyond a generic theme while the compiler still guarantees responsive behavior.
+
+balanced and original generations may request precise web media searches. lamina resolves those requests through the wikimedia commons api, downloads the selected image, gif, or video into `assets/web/`, and writes `credits.json` plus `CREDITS.md` with creator, license, and source information. generated presentations remain offline.
+
+## direct editor
+
+after generation, select `edit slides` in the preview toolbar. visible text becomes directly editable. drag the visual stage to reposition media and use the trackpad wheel over it to scale. changes are persisted to `deck.json` and compiled incrementally, so the exported files stay synchronized with the editor.
+
 ## project structure
 
 ```text
@@ -87,6 +99,7 @@ Sources/Lamina/
 ├── Models/              requests, projects, providers, and errors
 ├── Resources/Algorithms reusable narrative behaviors
 ├── Resources/Components local slide mechanisms
+├── Resources/Grammars   proven art-direction systems
 ├── Resources/Themes     parameterized visual systems
 └── Services/            planning, agents, compiler, memory, and validation
 ```
