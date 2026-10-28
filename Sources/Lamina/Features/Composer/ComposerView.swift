@@ -10,6 +10,7 @@ struct ComposerView: View {
                 ComposerHeaderView()
                 ProviderPickerView(model: model)
                 GenerationModePickerView(model: model)
+                GenerationBudgetPickerView(model: model)
                 SourceEditorView(model: model)
                 DirectionEditorView(model: model)
                 GenerateButton(model: model)

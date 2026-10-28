@@ -2,8 +2,12 @@ import SwiftUI
 
 struct PreviewToolbarView: View {
     let project: PresentationProject?
+    let rating: Bool?
+    let layoutIssueCount: Int
     let onReveal: () -> Void
     let onReset: () -> Void
+    let onRegenerate: (Int) -> Void
+    let onRate: (Bool) -> Void
 
     var body: some View {
         HStack(spacing: DesignTokens.compactSpacing) {
@@ -17,6 +21,32 @@ struct PreviewToolbarView: View {
             }
             Spacer()
             if project != nil {
+                if layoutIssueCount > 0 {
+                    Label("\(layoutIssueCount) layout issues", systemImage: "exclamationmark.triangle")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                } else {
+                    Label("layout clean", systemImage: "checkmark.circle")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                if let project, project.slideCount > 0 {
+                    Menu("repair slide", systemImage: "wrench.and.screwdriver") {
+                        ForEach(0..<project.slideCount, id: \.self) { index in
+                            Button("slide \(index + 1)") { onRegenerate(index) }
+                        }
+                    }
+                }
+                Button("worked well", systemImage: rating == true ? "hand.thumbsup.fill" : "hand.thumbsup") {
+                    onRate(true)
+                }
+                .labelStyle(.iconOnly)
+                .help("mark this generation as successful")
+                Button("needs work", systemImage: rating == false ? "hand.thumbsdown.fill" : "hand.thumbsdown") {
+                    onRate(false)
+                }
+                .labelStyle(.iconOnly)
+                .help("lower this pattern's future priority")
                 Button("show in finder", systemImage: "folder", action: onReveal)
                 Button("new presentation", systemImage: "plus", action: onReset)
             }
