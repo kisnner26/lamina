@@ -10,7 +10,11 @@ struct SlideRenderer: Sendable {
         let kicker = slide.kicker.map { "<p class=\"kicker\">\(escape($0))</p>" } ?? ""
         let body = slide.body.map { "<p class=\"body-copy\">\(escape($0))</p>" } ?? ""
         let bullets = renderBullets(slide.bullets ?? [])
-        let evidence = renderFacts(ids: slide.factIDs ?? [], facts: facts)
+        let evidence = renderFacts(
+            ids: slide.factIDs ?? [],
+            facts: facts,
+            expanded: slide.pattern == "evidence-focus"
+        )
         let media = renderMedia(slide.media ?? [])
         let visual = visualMarkup(for: slide.pattern, slide: slide)
         let accent = safeColor(slide.accent).map { " style=\"--slide-accent:\($0)\"" } ?? ""
@@ -32,9 +36,12 @@ struct SlideRenderer: Sendable {
         }.joined() + "</ul>"
     }
 
-    private func renderFacts(ids: [String], facts: [FactRecord]) -> String {
+    private func renderFacts(ids: [String], facts: [FactRecord], expanded: Bool) -> String {
         let selected = ids.compactMap { id in facts.first { $0.id == id } }
         guard !selected.isEmpty else { return "" }
+        guard expanded else {
+            return "<p class=\"fact-refs\">source · \(selected.map { escape($0.id) }.joined(separator: " · "))</p>"
+        }
         return "<div class=\"facts\">" + selected.map {
             "<blockquote><small>\(escape($0.id.uppercased()))</small>\(escape($0.text))</blockquote>"
         }.joined() + "</div>"
