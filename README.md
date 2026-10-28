@@ -13,6 +13,8 @@ native macos presentation engine that turns text and images into original, offli
 - keeps every deck portable: plain html, css, javascript, and local assets
 - validates the output before displaying it
 - stores presentations in `~/Documents/Lamina Presentations`
+- offers a compact graph mode that plans slides locally before invoking the agent
+- reuses subject-aware narrative algorithms instead of rebuilding every deck from zero
 
 ## requirements
 
@@ -44,6 +46,19 @@ the generated deck must:
 - respect reduced motion and visible keyboard focus
 - avoid clipping at common desktop and narrow viewport sizes
 
+## graph generation
+
+graph mode is the default token-efficient path. lamina selects a reusable algorithm from the source, writes a compact slide graph, and asks the connected agent to execute that plan. the original source is stored once in the generated project's `planning/` directory instead of being repeated inside the agent prompt.
+
+the built-in algorithm library lives in `Sources/Lamina/Resources/Algorithms/`:
+
+- `narrative-arc` for stories, history, people, and cultural change
+- `comparison` for versus decks and direct contrasts
+- `process-explainer` for recipes, workflows, and transformations
+- `concept-map` for systems, architecture, and connected ideas
+
+each algorithm is plain json. it defines trigger keywords, slide roles, proven visual mechanisms, and constraints, so new patterns can be added without changing the generator.
+
 ## project structure
 
 ```text
@@ -53,6 +68,7 @@ Sources/Lamina/
 ├── Features/Composer/   source editor and generation state
 ├── Features/Preview/    local web deck preview
 ├── Models/              requests, projects, providers, and errors
+├── Resources/Algorithms reusable presentation behaviors
 └── Services/            agents, process isolation, prompt, and validation
 ```
 
