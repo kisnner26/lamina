@@ -23,8 +23,9 @@ struct PreviewToolbarView: View {
             }
             Spacer()
             if project != nil {
-                Button(isEditing ? "done editing" : "edit slides", systemImage: isEditing ? "checkmark" : "cursorarrow.motionlines", action: onToggleEditing)
+                Button(isEditing ? "done" : "edit", systemImage: isEditing ? "checkmark" : "cursorarrow.motionlines", action: onToggleEditing)
                     .buttonStyle(.borderedProminent)
+                    .fixedSize()
                 if layoutIssueCount > 0 {
                     Label("\(layoutIssueCount) layout issues", systemImage: "exclamationmark.triangle")
                         .font(.caption)
@@ -52,7 +53,8 @@ struct PreviewToolbarView: View {
                     Divider()
                     Button("show in finder", systemImage: "folder", action: onReveal)
                 }
-                Button("new presentation", systemImage: "plus", action: onReset)
+                Button("new", systemImage: "plus", action: onReset)
+                    .fixedSize()
             }
         }
         .padding(.horizontal, 18)
