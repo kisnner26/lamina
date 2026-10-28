@@ -9,10 +9,7 @@ let package = Package(
         .executable(name: "Lamina", targets: ["Lamina"])
     ],
     targets: [
-        .executableTarget(
-            name: "Lamina",
-            resources: [.process("Resources")]
-        ),
+        .executableTarget(name: "Lamina"),
         .testTarget(
             name: "LaminaTests",
             dependencies: ["Lamina"]
