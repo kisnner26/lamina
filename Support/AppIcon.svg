@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="background" x1="120" y1="80" x2="900" y2="940" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#202b3d"/>
+      <stop offset="1" stop-color="#080b12"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="350" y1="252" x2="730" y2="770" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6aa8ff"/>
+      <stop offset=".52" stop-color="#317ce8"/>
+      <stop offset="1" stop-color="#1552b9"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="300" y1="210" x2="760" y2="820" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ffffff" stop-opacity=".28"/>
+      <stop offset=".5" stop-color="#a9cfff" stop-opacity=".10"/>
+      <stop offset="1" stop-color="#4488e9" stop-opacity=".05"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="35" stdDeviation="38" flood-color="#000814" flood-opacity=".58"/>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="45"/>
+    </filter>
+  </defs>
+
+  <rect x="32" y="32" width="960" height="960" rx="224" fill="url(#background)"/>
+  <circle cx="700" cy="290" r="250" fill="#327ff0" opacity=".20" filter="url(#soft)"/>
+  <circle cx="320" cy="760" r="210" fill="#226ad6" opacity=".13" filter="url(#soft)"/>
+
+  <g filter="url(#shadow)">
+    <rect x="232" y="294" width="510" height="436" rx="96" fill="#132034" stroke="#6ca7ff" stroke-opacity=".18" stroke-width="5" transform="rotate(-9 487 512)"/>
+    <rect x="275" y="246" width="510" height="436" rx="96" fill="url(#glass)" stroke="#bdd8ff" stroke-opacity=".28" stroke-width="5" transform="rotate(5 530 464)"/>
+    <rect x="286" y="284" width="510" height="436" rx="96" fill="#111827" stroke="#ffffff" stroke-opacity=".16" stroke-width="5"/>
+  </g>
+
+  <g fill="url(#blue)">
+    <rect x="366" y="369" width="186" height="132" rx="38"/>
+    <rect x="366" y="536" width="186" height="92" rx="34" opacity=".88"/>
+    <rect x="586" y="369" width="126" height="259" rx="38"/>
+  </g>
+  <path d="M387 391h136" stroke="#ffffff" stroke-opacity=".48" stroke-width="8" stroke-linecap="round"/>
+  <path d="M607 391h84" stroke="#ffffff" stroke-opacity=".36" stroke-width="8" stroke-linecap="round"/>
+  <rect x="48" y="48" width="928" height="928" rx="208" fill="none" stroke="#ffffff" stroke-opacity=".07" stroke-width="4"/>
+</svg>
