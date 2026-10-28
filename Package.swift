@@ -11,7 +11,11 @@ let package = Package(
     targets: [
         .executableTarget(
             name: "Lamina",
-            resources: [.copy("Resources/Algorithms")]
+            resources: [
+                .copy("Resources/Algorithms"),
+                .copy("Resources/Components"),
+                .copy("Resources/Themes")
+            ]
         ),
         .testTarget(
             name: "LaminaTests",
