@@ -18,6 +18,7 @@ actor WebMediaResolver {
     ) async -> DeckIR {
         var resolvedDeck = deck
         var credits: [WebMediaAsset] = []
+        var usedSources: Set<String> = []
         let limit = switch budget {
         case .economy: 2
         case .balanced: 4
@@ -36,10 +37,12 @@ actor WebMediaResolver {
                 guard let asset = try? await searchAndDownload(
                     query: query,
                     ordinal: downloaded + 1,
-                    directory: directory
+                    directory: directory,
+                    excluding: usedSources
                 ) else { continue }
                 resolvedDeck.slides[slideIndex].media = (resolvedDeck.slides[slideIndex].media ?? []) + [asset.localPath]
                 credits.append(asset)
+                usedSources.insert(asset.sourceURL)
                 downloaded += 1
             }
         }
@@ -51,7 +54,8 @@ actor WebMediaResolver {
     private func searchAndDownload(
         query: WebMediaQuery,
         ordinal: Int,
-        directory: URL
+        directory: URL,
+        excluding usedSources: Set<String>
     ) async throws -> WebMediaAsset {
         let searchModifier = switch query.type {
         case .image: "filetype:bitmap -filemime:image/gif"
@@ -66,6 +70,8 @@ actor WebMediaResolver {
                       accepts(mime: mime, type: query.type),
                       let rawURL = preferredURL(info: info, type: query.type),
                       let mediaURL = URL(string: rawURL) else { continue }
+                let sourceURL = info["descriptionurl"] as? String ?? rawURL
+                guard !usedSources.contains(sourceURL) else { continue }
                 guard try await isSafeToDownload(mediaURL, type: query.type) else { continue }
                 let (mediaData, response) = try await session.data(from: mediaURL)
                 guard mediaData.count <= 30_000_000 else { continue }
@@ -81,7 +87,7 @@ actor WebMediaResolver {
                     creator: metadataValue("Artist", from: metadata),
                     license: metadataValue("LicenseShortName", from: metadata),
                     licenseURL: metadataValue("LicenseUrl", from: metadata),
-                    sourceURL: info["descriptionurl"] as? String ?? rawURL
+                    sourceURL: sourceURL
                 )
             }
         }
