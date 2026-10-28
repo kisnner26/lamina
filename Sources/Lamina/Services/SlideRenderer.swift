@@ -11,7 +11,7 @@ struct SlideRenderer: Sendable {
         let body = slide.body.map { "<p class=\"body-copy\">\(escape($0))</p>" } ?? ""
         let bullets = renderBullets(slide.bullets ?? [])
         let evidence = renderFacts(ids: slide.factIDs ?? [], facts: facts)
-        let media = renderMedia(slide.media?.first)
+        let media = renderMedia(slide.media ?? [])
         let visual = visualMarkup(for: slide.pattern, slide: slide)
         let accent = safeColor(slide.accent).map { " style=\"--slide-accent:\($0)\"" } ?? ""
 
@@ -40,9 +40,13 @@ struct SlideRenderer: Sendable {
         }.joined() + "</div>"
     }
 
-    private func renderMedia(_ path: String?) -> String {
-        guard let path, !path.contains("://") else { return "" }
-        return "<figure class=\"media-frame\"><img src=\"\(escapeAttribute(path))\" alt=\"\"></figure>"
+    private func renderMedia(_ paths: [String]) -> String {
+        let localPaths = paths.filter { !$0.contains("://") }.prefix(3)
+        guard !localPaths.isEmpty else { return "" }
+        let frames = localPaths.map { path in
+            "<figure class=\"media-frame\"><img src=\"\(escapeAttribute(path))\" alt=\"\"></figure>"
+        }.joined()
+        return "<div class=\"media-stack media-count-\(localPaths.count)\">\(frames)</div>"
     }
 
     private func visualMarkup(for pattern: String, slide: DeckSlide) -> String {
