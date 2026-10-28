@@ -9,6 +9,7 @@ struct ComposerView: View {
             VStack(alignment: .leading, spacing: DesignTokens.standardSpacing) {
                 ComposerHeaderView()
                 ProviderPickerView(model: model)
+                GenerationModePickerView(model: model)
                 SourceEditorView(model: model)
                 DirectionEditorView(model: model)
                 GenerateButton(model: model)
