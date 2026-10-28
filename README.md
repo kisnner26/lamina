@@ -15,6 +15,9 @@ native macos presentation engine that turns text and images into original, offli
 - stores presentations in `~/Documents/Lamina Presentations`
 - offers a compact graph mode that plans slides locally before invoking the agent
 - reuses subject-aware narrative algorithms instead of rebuilding every deck from zero
+- asks the agent for compact deck ir instead of regenerated html, css, and javascript
+- compiles slides locally from reusable components and theme parameters
+- caches unchanged slide fragments and can repair one slide at a time
 
 ## requirements
 
@@ -59,6 +62,20 @@ the built-in algorithm library lives in `Sources/Lamina/Resources/Algorithms/`:
 
 each algorithm is plain json. it defines trigger keywords, slide roles, proven visual mechanisms, and constraints, so new patterns can be added without changing the generator.
 
+## deck compiler
+
+the connected agent writes `deck.json`: content, fact references, theme id, and component ids. lamina validates that ir and deterministically compiles the offline web presentation. the agent never needs to rewrite navigation, responsive css, accessibility behavior, or animation infrastructure.
+
+three token budgets control how much freedom the agent receives:
+
+- `economy`: existing components and source media only
+- `balanced`: selected components plus small custom svg assets
+- `original`: the complete component catalog and original local svg assets
+
+the compiler stores hashes and rendered slide fragments in `.lamina-cache/`. repairing one slide changes only that slide in `deck.json`; unchanged fragments are reused. a local fact ledger prevents unsupported claims, while the preview audits text overflow and reports affected slides.
+
+successful component combinations are stored locally in application support. explicit positive or negative feedback changes which patterns are retrieved for later presentations using the same narrative algorithm.
+
 ## project structure
 
 ```text
@@ -68,8 +85,10 @@ Sources/Lamina/
 ├── Features/Composer/   source editor and generation state
 ├── Features/Preview/    local web deck preview
 ├── Models/              requests, projects, providers, and errors
-├── Resources/Algorithms reusable presentation behaviors
-└── Services/            agents, process isolation, prompt, and validation
+├── Resources/Algorithms reusable narrative behaviors
+├── Resources/Components local slide mechanisms
+├── Resources/Themes     parameterized visual systems
+└── Services/            planning, agents, compiler, memory, and validation
 ```
 
 ## status
