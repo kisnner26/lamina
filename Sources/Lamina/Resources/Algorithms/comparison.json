@@ -1,0 +1,9 @@
+{
+  "id": "comparison",
+  "name": "contrast engine",
+  "summary": "compares two subjects without reducing every slide to two equal columns",
+  "keywords": ["versus", "vs", "compare", "difference", "similar", "both", "better", "two"],
+  "slideRoles": ["hook", "shared frame", "subject a", "subject b", "direct contrast", "tradeoffs", "verdict"],
+  "mechanisms": ["visual collision", "shared scale", "asymmetric spotlight", "morphing divider", "comparison matrix", "weighted conclusion"],
+  "constraints": ["reserve split layouts for direct comparisons", "give each subject a distinct motion language", "compare on the same measurable axes"]
+}

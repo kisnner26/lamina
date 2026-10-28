@@ -1,0 +1,9 @@
+{
+  "id": "concept-map",
+  "name": "concept map",
+  "summary": "organizes a dense topic as connected ideas that progressively become legible",
+  "keywords": ["system", "network", "architecture", "concept", "relationship", "ecosystem", "components", "structure"],
+  "slideRoles": ["central question", "map overview", "core node", "branches", "relationships", "example path", "resolved map"],
+  "mechanisms": ["node constellation", "focus pull", "branch expansion", "animated connectors", "path trace", "map resolution"],
+  "constraints": ["never reveal the entire dense map at once", "use labels shorter than six words", "make connections directional and meaningful"]
+}

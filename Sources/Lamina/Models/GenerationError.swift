@@ -3,6 +3,7 @@ import Foundation
 enum GenerationError: LocalizedError, Equatable {
     case missingExecutable(AIProvider)
     case emptySource
+    case missingAlgorithmLibrary
     case agentFailed(provider: AIProvider, details: String)
     case invalidDeck(String)
     case fileOperation(String)
@@ -13,6 +14,8 @@ enum GenerationError: LocalizedError, Equatable {
             "No se encontró \(provider.displayName). Instala su CLI e inicia sesión antes de generar."
         case .emptySource:
             "Agrega texto o al menos una imagen como fuente."
+        case .missingAlgorithmLibrary:
+            "No se pudo cargar la biblioteca de algoritmos de presentación."
         case .agentFailed(let provider, let details):
             "\(provider.displayName) no pudo terminar la presentación. \(details)"
         case .invalidDeck(let reason):

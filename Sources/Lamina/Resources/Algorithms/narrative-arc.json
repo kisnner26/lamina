@@ -1,0 +1,9 @@
+{
+  "id": "narrative-arc",
+  "name": "narrative arc",
+  "summary": "turns a subject into a clear journey from tension to resolution",
+  "keywords": ["history", "story", "person", "culture", "change", "future", "origin"],
+  "slideRoles": ["hook", "context", "origin", "turning point", "evidence", "meaning", "final echo"],
+  "mechanisms": ["cinematic title", "visual timeline", "layered reveal", "annotated evidence", "before and after", "closing callback"],
+  "constraints": ["open with tension, not a definition", "each slide must advance the story", "repeat one visual motif at the ending"]
+}

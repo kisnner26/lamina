@@ -1,0 +1,9 @@
+{
+  "id": "process-explainer",
+  "name": "process explainer",
+  "summary": "shows how inputs transform through a sequence into a visible result",
+  "keywords": ["process", "steps", "recipe", "make", "build", "how", "method", "ingredients"],
+  "slideRoles": ["result first", "inputs", "setup", "transformation", "critical step", "finished result", "recap"],
+  "mechanisms": ["result reveal", "object inventory", "progressive assembly", "step animation", "detail zoom", "looping recap"],
+  "constraints": ["show actions rather than describing them", "keep one action per step", "make the result visually answer the opening"]
+}
