@@ -6,6 +6,7 @@ enum GenerationError: LocalizedError, Equatable {
     case missingAlgorithmLibrary
     case missingComponentLibrary
     case missingThemeLibrary
+    case missingVisualGrammar
     case agentFailed(provider: AIProvider, details: String)
     case invalidDeck(String)
     case fileOperation(String)
@@ -22,6 +23,8 @@ enum GenerationError: LocalizedError, Equatable {
             "No se pudo cargar el catálogo de componentes."
         case .missingThemeLibrary:
             "No se pudo cargar el catálogo de temas."
+        case .missingVisualGrammar:
+            "No se pudo cargar la gramática visual."
         case .agentFailed(let provider, let details):
             "\(provider.displayName) no pudo terminar la presentación. \(details)"
         case .invalidDeck(let reason):

@@ -12,6 +12,7 @@ actor AgentPresentationGenerator {
     private let irValidator: DeckIRValidator
     private let compiler: DeckCompiler
     private let memoryStore: GenerationMemoryStore
+    private let mediaResolver: WebMediaResolver
     private var plans: [String: GenerationPlan] = [:]
 
     init(
@@ -25,7 +26,8 @@ actor AgentPresentationGenerator {
         irLoader: DeckIRLoader = DeckIRLoader(),
         irValidator: DeckIRValidator = DeckIRValidator(),
         compiler: DeckCompiler = DeckCompiler(),
-        memoryStore: GenerationMemoryStore = GenerationMemoryStore()
+        memoryStore: GenerationMemoryStore = GenerationMemoryStore(),
+        mediaResolver: WebMediaResolver = WebMediaResolver()
     ) {
         self.locator = locator
         self.runner = runner
@@ -38,6 +40,7 @@ actor AgentPresentationGenerator {
         self.irValidator = irValidator
         self.compiler = compiler
         self.memoryStore = memoryStore
+        self.mediaResolver = mediaResolver
     }
 
     func makeWorkspace(title: String) async throws -> URL {
@@ -78,7 +81,11 @@ actor AgentPresentationGenerator {
             )
         }
 
-        let deck = try irLoader.load(from: request.outputDirectory)
+        var deck = try irLoader.load(from: request.outputDirectory)
+        deck = await mediaResolver.resolve(deck: deck, in: request.outputDirectory, budget: request.budget)
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]
+        try encoder.encode(deck).write(to: request.outputDirectory.appending(path: "deck.json"), options: .atomic)
         let audit = irValidator.audit(
             deck: deck,
             components: plan.components,

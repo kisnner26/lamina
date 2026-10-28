@@ -5,6 +5,7 @@ struct GenerationPlanWriter: Sendable {
     private let componentLibrary = ComponentLibrary()
     private let themeLibrary = ThemeLibrary()
     private let factLedgerBuilder = FactLedgerBuilder()
+    private let grammarLibrary = VisualGrammarLibrary()
 
     func write(
         request: GenerationRequest,
@@ -21,6 +22,7 @@ struct GenerationPlanWriter: Sendable {
         let factsURL = folder.appending(path: "facts.json")
         let componentsURL = folder.appending(path: "components.json")
         let themesURL = folder.appending(path: "themes.json")
+        let grammarURL = folder.appending(path: "visual-grammar.json")
         let graph = graphBuilder.build(request: request, algorithm: algorithm)
         let facts = factLedgerBuilder.build(from: request.sourceText)
         let components = try componentLibrary.select(
@@ -29,6 +31,7 @@ struct GenerationPlanWriter: Sendable {
             preferredIDs: preferredComponentIDs
         )
         let themes = try themeLibrary.select(for: request)
+        let grammar = try grammarLibrary.select(for: request)
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys, .withoutEscapingSlashes]
 
@@ -43,6 +46,7 @@ struct GenerationPlanWriter: Sendable {
         try encoder.encode(facts).write(to: factsURL, options: .atomic)
         try encoder.encode(components).write(to: componentsURL, options: .atomic)
         try encoder.encode(themes).write(to: themesURL, options: .atomic)
+        try encoder.encode(grammar).write(to: grammarURL, options: .atomic)
 
         return GenerationPlan(
             algorithm: algorithm,
@@ -51,12 +55,14 @@ struct GenerationPlanWriter: Sendable {
             directionPath: "planning/direction.txt",
             algorithmPath: "planning/algorithm.json",
             graphPath: "planning/presentation-graph.json",
+            grammarPath: "planning/visual-grammar.json",
             factsPath: "planning/facts.json",
             componentsPath: "planning/components.json",
             themesPath: "planning/themes.json",
             components: components,
             themes: themes,
-            facts: facts
+            facts: facts,
+            grammar: grammar
         )
     }
 }

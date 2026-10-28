@@ -1,14 +1,16 @@
 import Foundation
 
 struct DeckSlide: Codable, Identifiable, Sendable {
-    let id: String
-    let pattern: String
-    let kicker: String?
-    let title: String
-    let body: String?
-    let bullets: [String]?
-    let factIDs: [String]?
-    let media: [String]?
-    let accent: String?
-    let notes: String?
+    var id: String
+    var pattern: String
+    var kicker: String?
+    var title: String
+    var body: String?
+    var bullets: [String]?
+    var factIDs: [String]?
+    var media: [String]?
+    var mediaQueries: [WebMediaQuery]? = nil
+    var accent: String?
+    var notes: String?
+    var layout: SlideLayout? = nil
 }

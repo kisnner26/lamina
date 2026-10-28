@@ -7,8 +7,8 @@ struct SlideRenderer: Sendable {
         total: Int,
         facts: [FactRecord]
     ) -> String {
-        let kicker = slide.kicker.map { "<p class=\"kicker\">\(escape($0))</p>" } ?? ""
-        let body = slide.body.map { "<p class=\"body-copy\">\(escape($0))</p>" } ?? ""
+        let kicker = slide.kicker.map { "<p class=\"kicker\" data-edit-field=\"kicker\">\(escape($0))</p>" } ?? ""
+        let body = slide.body.map { "<p class=\"body-copy\" data-edit-field=\"body\">\(escape($0))</p>" } ?? ""
         let bullets = renderBullets(slide.bullets ?? [])
         let evidence = renderFacts(
             ids: slide.factIDs ?? [],
@@ -20,10 +20,10 @@ struct SlideRenderer: Sendable {
         let accent = safeColor(slide.accent).map { " style=\"--slide-accent:\($0)\"" } ?? ""
 
         return """
-        <section class="slide pattern-\(escapeAttribute(slide.pattern))" data-slide="\(index)" data-slide-id="\(escapeAttribute(slide.id))"\(accent)>
+        <section class="slide pattern-\(escapeAttribute(slide.pattern))\((slide.media ?? []).isEmpty ? "" : " has-media")" data-slide="\(index)" data-slide-id="\(escapeAttribute(slide.id))"\(accent)>
           <div class="slide-index">\(padded(index + 1)) / \(padded(total))</div>
-          <div class="slide-copy">\(kicker)<h2>\(escape(slide.title))</h2>\(body)\(bullets)\(evidence)</div>
-          <div class="slide-visual" aria-hidden="true">\(media)\(visual)</div>
+          <div class="slide-copy">\(kicker)<h2 data-edit-field="title">\(escape(slide.title))</h2>\(body)\(bullets)\(evidence)</div>
+          <div class="slide-visual" aria-hidden="true"\(layoutAttributes(slide.layout))>\(media)\(visual)</div>
           \(slide.notes.map { "<aside class=\"speaker-notes\">\(escape($0))</aside>" } ?? "")
         </section>
         """
@@ -32,7 +32,7 @@ struct SlideRenderer: Sendable {
     private func renderBullets(_ bullets: [String]) -> String {
         guard !bullets.isEmpty else { return "" }
         return "<ul class=\"bullet-list\">" + bullets.enumerated().map { index, item in
-            "<li><span>\(padded(index + 1))</span>\(escape(item))</li>"
+            "<li><span class=\"bullet-number\">\(padded(index + 1))</span><span class=\"bullet-text\" data-edit-field=\"bullet-\(index)\">\(escape(item))</span></li>"
         }.joined() + "</ul>"
     }
 
@@ -51,7 +51,11 @@ struct SlideRenderer: Sendable {
         let localPaths = paths.filter { !$0.contains("://") }.prefix(3)
         guard !localPaths.isEmpty else { return "" }
         let frames = localPaths.map { path in
-            "<figure class=\"media-frame\"><img src=\"\(escapeAttribute(path))\" alt=\"\"></figure>"
+            let extensionName = URL(fileURLWithPath: path).pathExtension.lowercased()
+            if ["mp4", "webm", "ogv", "mov"].contains(extensionName) {
+                return "<figure class=\"media-frame\"><video src=\"\(escapeAttribute(path))\" autoplay muted loop playsinline></video></figure>"
+            }
+            return "<figure class=\"media-frame\"><img src=\"\(escapeAttribute(path))\" alt=\"\"></figure>"
         }.joined()
         return "<div class=\"media-stack media-count-\(localPaths.count)\">\(frames)</div>"
     }
@@ -94,6 +98,14 @@ struct SlideRenderer: Sendable {
     }
 
     private func escapeAttribute(_ value: String) -> String { escape(value) }
+
+    private func layoutAttributes(_ layout: SlideLayout?) -> String {
+        let x = min(max(layout?.x ?? 0, -180), 180)
+        let y = min(max(layout?.y ?? 0, -180), 180)
+        let scale = min(max(layout?.scale ?? 1, 0.25), 3)
+        let rotation = min(max(layout?.rotation ?? 0, -180), 180)
+        return " data-x=\"\(x)\" data-y=\"\(y)\" data-scale=\"\(scale)\" style=\"transform:translate(\(x)%,\(y)%) scale(\(scale)) rotate(\(rotation)deg)\""
+    }
 
     private func padded(_ value: Int) -> String { value < 10 ? "0\(value)" : "\(value)" }
 }

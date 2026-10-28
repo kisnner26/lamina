@@ -19,7 +19,7 @@ struct ComponentLibrary: Sendable {
     ) throws -> [ComponentDefinition] {
         let available = try loadAll().filter { $0.budgets.contains(request.budget) }
         let material = "\(request.title) \(request.sourceText) \(request.instructions) \(algorithm.mechanisms.joined(separator: " "))".lowercased()
-        let anchors = available.filter { $0.id == "hero" || $0.id == "closing" }
+        let anchors = available.filter { ["hero", "full-bleed", "closing"].contains($0.id) }
         var scored: [(component: ComponentDefinition, score: Int)] = []
         for component in available where !anchors.contains(where: { $0.id == component.id }) {
             let memoryBoost = preferredIDs.firstIndex(of: component.id).map { max(1, 4 - $0) } ?? 0

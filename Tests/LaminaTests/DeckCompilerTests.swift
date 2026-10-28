@@ -46,6 +46,33 @@ struct DeckCompilerTests {
         #expect(facts.map(\.section) == [1, 1, 2])
     }
 
+    @Test func editorPersistsTextAndVisualPosition() async throws {
+        let directory = URL.temporaryDirectory.appending(path: UUID().uuidString, directoryHint: .isDirectory)
+        let planning = directory.appending(path: "planning", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: planning, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let deck = DeckIR(
+            version: 1,
+            title: "Editable",
+            subtitle: nil,
+            theme: "editorial-dark",
+            slides: (1...5).map { slide(id: "s\($0)", pattern: $0 == 5 ? "closing" : "hero", title: "Slide \($0)") }
+        )
+        let encoder = JSONEncoder()
+        try encoder.encode(deck).write(to: directory.appending(path: "deck.json"))
+        try encoder.encode([FactRecord]()).write(to: planning.appending(path: "facts.json"))
+        let project = PresentationProject(title: deck.title, directory: directory, slideCount: 5)
+        let editor = DeckEditorService()
+
+        try await editor.apply(DeckEditMessage(slide: 0, field: "title", value: "New title", x: nil, y: nil, scale: nil, rotation: nil), to: project)
+        try await editor.apply(DeckEditMessage(slide: 0, field: "layout", value: nil, x: 12, y: -8, scale: 1.3, rotation: 0), to: project)
+        let edited = try DeckIRLoader().load(from: directory)
+
+        #expect(edited.slides[0].title == "New title")
+        #expect(edited.slides[0].layout?.x == 12)
+        #expect(edited.slides[0].layout?.scale == 1.3)
+    }
+
     private func slide(
         id: String,
         pattern: String,

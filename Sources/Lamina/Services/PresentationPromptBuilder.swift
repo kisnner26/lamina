@@ -25,6 +25,7 @@ struct PresentationPromptBuilder: Sendable {
         facts=\(plan.factsPath)
         algorithm=\(plan.algorithmPath)
         graph=\(plan.graphPath)
+        visual_grammar=\(plan.grammarPath)
         allowed_components=\(plan.componentsPath)
         allowed_themes=\(plan.themesPath)
 
@@ -37,13 +38,16 @@ struct PresentationPromptBuilder: Sendable {
         Write exactly one required file: deck.json. Optional generated SVG files belong under assets/generated/. Never write index.html, CSS, or JavaScript; Lamina compiles those locally.
 
         deck.json schema:
-        {"version":1,"title":"...","subtitle":"...","theme":"allowed theme id","slides":[{"id":"slide-1","pattern":"allowed component id","kicker":"...","title":"...","body":"...","bullets":["..."],"factIDs":["f1"],"media":["assets/source/file.jpg"],"accent":"#RRGGBB","notes":"..."}]}
+        {"version":1,"title":"...","subtitle":"...","theme":"allowed theme id","artDirection":{"motif":"subject-specific visual motif","composition":"cinematic|editorial|kinetic","imageTreatment":"...","motion":"...","texture":"..."},"slides":[{"id":"slide-1","pattern":"allowed component id","kicker":"...","title":"...","body":"...","bullets":["..."],"factIDs":["f1"],"media":["assets/source/file.jpg"],"mediaQueries":[{"query":"specific searchable scene","type":"image|gif|video"}],"accent":"#RRGGBB","notes":"...","layout":{"x":0,"y":0,"scale":1,"rotation":0,"alignment":"left|right|center"}}]}
 
         Rules:
         - 5 to 12 slides; concise visible text; no repeated layout for most slides.
         - Use only component and theme ids from the provided catalogs.
         - Use factIDs for factual claims. Never invent facts, dates, numbers, names, or quotes.
         - Treat component purpose as behavior, not visible labels. Create a strong opening, progression, and callback ending.
+        - Follow the visual grammar closely. Adapt its proven logic to this subject instead of copying its surface.
+        - Prefer full-bleed media, aggressive crops, asymmetric editorial composition, and subject-specific motion where the grammar calls for it.
+        - Add precise mediaQueries when authentic photography, GIF, or video improves a scene. Lamina searches Wikimedia Commons, downloads it locally, and preserves credits.
         - Keep source media paths relative. No remote URLs, external libraries, or markdown response.
         - Make valid JSON with no comments or code fence. Verify deck.json before finishing.
         """

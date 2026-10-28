@@ -79,12 +79,22 @@ struct PresentationPromptBuilderTests {
             directionPath: "planning/direction.txt",
             algorithmPath: "planning/algorithm.json",
             graphPath: "planning/presentation-graph.json",
+            grammarPath: "planning/visual-grammar.json",
             factsPath: "planning/facts.json",
             componentsPath: "planning/components.json",
             themesPath: "planning/themes.json",
             components: [],
             themes: [],
-            facts: []
+            facts: [],
+            grammar: VisualGrammar(
+                id: "test",
+                name: "test",
+                keywords: [],
+                principles: [],
+                compositionRules: [],
+                motionRules: [],
+                mediaRules: []
+            )
         )
     }
 }

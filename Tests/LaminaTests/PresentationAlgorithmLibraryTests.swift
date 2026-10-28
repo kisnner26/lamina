@@ -48,4 +48,19 @@ struct PresentationAlgorithmLibraryTests {
         #expect(graph.nodes[2].next.isEmpty)
         #expect(graph.nodes[1].sourceSections == [2])
     }
+
+    @Test func selectsEditorialDuelForFoodComparison() throws {
+        let request = GenerationRequest(
+            title: "Pancakes versus crepes",
+            sourceText: "Compare two recipes from different countries.",
+            instructions: "visual food presentation",
+            images: [],
+            provider: .codex,
+            mode: .graph,
+            budget: .balanced,
+            outputDirectory: URL(fileURLWithPath: "/tmp/deck")
+        )
+
+        #expect(try VisualGrammarLibrary().select(for: request).id == "editorial-duel")
+    }
 }

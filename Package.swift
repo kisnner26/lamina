@@ -14,7 +14,8 @@ let package = Package(
             resources: [
                 .copy("Resources/Algorithms"),
                 .copy("Resources/Components"),
-                .copy("Resources/Themes")
+                .copy("Resources/Themes"),
+                .copy("Resources/Grammars")
             ]
         ),
         .testTarget(
