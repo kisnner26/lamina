@@ -30,17 +30,24 @@ struct PresentationWebView: NSViewRepresentable {
         context.coordinator.isEditing = isEditing
         webView.navigationDelegate = context.coordinator
         webView.setValue(false, forKey: "drawsBackground")
-        load(project, in: webView)
+        load(project, in: webView, coordinator: context.coordinator)
         return webView
     }
 
     func updateNSView(_ webView: WKWebView, context: Context) {
         context.coordinator.isEditing = isEditing
         context.coordinator.applyEditing(to: webView)
-        if webView.url != project.indexURL { load(project, in: webView) }
+        if context.coordinator.loadedRevision != project.renderRevision {
+            load(project, in: webView, coordinator: context.coordinator)
+        }
     }
 
-    private func load(_ project: PresentationProject, in webView: WKWebView) {
+    private func load(
+        _ project: PresentationProject,
+        in webView: WKWebView,
+        coordinator: PresentationWebCoordinator
+    ) {
+        coordinator.loadedRevision = project.renderRevision
         webView.loadFileURL(project.indexURL, allowingReadAccessTo: project.directory)
     }
 }
