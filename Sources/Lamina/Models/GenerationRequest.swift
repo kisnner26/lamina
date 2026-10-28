@@ -6,6 +6,7 @@ struct GenerationRequest: Sendable {
     let instructions: String
     let images: [SourceImage]
     let provider: AIProvider
+    let mode: GenerationMode
     let outputDirectory: URL
 
     var normalizedTitle: String {

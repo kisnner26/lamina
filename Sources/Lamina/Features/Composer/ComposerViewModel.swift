@@ -8,6 +8,7 @@ final class ComposerViewModel {
     var sourceText = ""
     var instructions = ""
     var provider: AIProvider = .codex
+    var generationMode: GenerationMode = .graph
     var images: [SourceImage] = []
     var status: GenerationStatus = .idle
     var project: PresentationProject?
@@ -61,6 +62,7 @@ final class ComposerViewModel {
                     instructions: instructions,
                     images: images,
                     provider: provider,
+                    mode: generationMode,
                     outputDirectory: workspace
                 )
                 let generatedProject = try await generator.generate(request)

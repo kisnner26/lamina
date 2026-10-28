@@ -6,19 +6,25 @@ actor AgentPresentationGenerator {
     private let workspaceManager: WorkspaceManager
     private let promptBuilder: PresentationPromptBuilder
     private let validator: DeckValidator
+    private let algorithmLibrary: PresentationAlgorithmLibrary
+    private let planWriter: GenerationPlanWriter
 
     init(
         locator: ExecutableLocator = ExecutableLocator(),
         runner: ProcessRunner = ProcessRunner(),
         workspaceManager: WorkspaceManager = WorkspaceManager(),
         promptBuilder: PresentationPromptBuilder = PresentationPromptBuilder(),
-        validator: DeckValidator = DeckValidator()
+        validator: DeckValidator = DeckValidator(),
+        algorithmLibrary: PresentationAlgorithmLibrary = PresentationAlgorithmLibrary(),
+        planWriter: GenerationPlanWriter = GenerationPlanWriter()
     ) {
         self.locator = locator
         self.runner = runner
         self.workspaceManager = workspaceManager
         self.promptBuilder = promptBuilder
         self.validator = validator
+        self.algorithmLibrary = algorithmLibrary
+        self.planWriter = planWriter
     }
 
     func makeWorkspace(title: String) async throws -> URL {
@@ -34,7 +40,14 @@ actor AgentPresentationGenerator {
         }
 
         let stagedImages = try await workspaceManager.stageImages(request.images, in: request.outputDirectory)
-        let prompt = promptBuilder.build(request: request, stagedImages: stagedImages)
+        let plan: GenerationPlan?
+        if request.mode == .graph {
+            let algorithm = try algorithmLibrary.select(for: request)
+            plan = try planWriter.write(request: request, algorithm: algorithm)
+        } else {
+            plan = nil
+        }
+        let prompt = promptBuilder.build(request: request, stagedImages: stagedImages, plan: plan)
         let result = try await runAgent(
             request.provider,
             executable: executable,

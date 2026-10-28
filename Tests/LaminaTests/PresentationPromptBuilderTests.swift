@@ -12,6 +12,7 @@ struct PresentationPromptBuilderTests {
             instructions: "Use simple English.",
             images: [],
             provider: .codex,
+            mode: .fullBrief,
             outputDirectory: output
         )
 
@@ -22,5 +23,42 @@ struct PresentationPromptBuilderTests {
         #expect(prompt.contains("No external libraries"))
         #expect(prompt.contains("Do not use a generic"))
         #expect(prompt.contains("file://"))
+    }
+
+    @Test func graphPromptReferencesPlanWithoutRepeatingSource() {
+        let output = URL(fileURLWithPath: "/tmp/lamina/graph-deck")
+        let algorithm = PresentationAlgorithm(
+            id: "comparison",
+            name: "contrast engine",
+            summary: "comparison",
+            keywords: ["versus"],
+            slideRoles: ["hook", "verdict"],
+            mechanisms: ["collision", "callback"],
+            constraints: ["stay asymmetric"]
+        )
+        let request = GenerationRequest(
+            title: "Pancakes vs crepes",
+            sourceText: "A deliberately unique source sentence.",
+            instructions: "simple English",
+            images: [],
+            provider: .codex,
+            mode: .graph,
+            outputDirectory: output
+        )
+        let graph = PresentationGraphBuilder().build(request: request, algorithm: algorithm)
+        let plan = GenerationPlan(
+            algorithm: algorithm,
+            graph: graph,
+            sourcePath: "planning/source.md",
+            directionPath: "planning/direction.txt",
+            algorithmPath: "planning/algorithm.json",
+            graphPath: "planning/presentation-graph.json"
+        )
+
+        let prompt = PresentationPromptBuilder().build(request: request, stagedImages: [], plan: plan)
+
+        #expect(prompt.contains("planning/presentation-graph.json"))
+        #expect(!prompt.contains(request.sourceText))
+        #expect(prompt.count < 2_000)
     }
 }

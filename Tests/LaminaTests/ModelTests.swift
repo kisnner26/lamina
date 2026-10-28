@@ -10,6 +10,7 @@ struct ModelTests {
             instructions: "",
             images: [],
             provider: .codex,
+            mode: .graph,
             outputDirectory: URL(fileURLWithPath: "/tmp/deck")
         )
 
