@@ -18,10 +18,12 @@ final class ComposerViewModel {
     var errorMessage = ""
     var projectRating: Bool?
     var layoutIssueSlides: [Int] = []
+    var isEditing = false
 
     private let generator: AgentPresentationGenerator
     private let locator: ExecutableLocator
     private var lastRequest: GenerationRequest?
+    private let editor = DeckEditorService()
 
     init(
         generator: AgentPresentationGenerator = AgentPresentationGenerator(),
@@ -91,6 +93,7 @@ final class ComposerViewModel {
         projectRating = nil
         layoutIssueSlides = []
         lastRequest = nil
+        isEditing = false
     }
 
     func regenerateSlide(_ index: Int) {
@@ -115,6 +118,22 @@ final class ComposerViewModel {
 
     func updateLayoutIssues(_ slides: [Int]) {
         layoutIssueSlides = Array(Set(slides)).sorted()
+    }
+
+    func toggleEditing() {
+        guard project != nil else { return }
+        isEditing.toggle()
+    }
+
+    func applyDeckEdit(_ edit: DeckEditMessage) {
+        guard let project else { return }
+        Task {
+            do {
+                try await editor.apply(edit, to: project)
+            } catch {
+                present(error)
+            }
+        }
     }
 
     private var normalizedTitle: String {

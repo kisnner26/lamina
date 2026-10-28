@@ -9,14 +9,21 @@ struct PreviewPanel: View {
                 project: model.project,
                 rating: model.projectRating,
                 layoutIssueCount: model.layoutIssueSlides.count,
+                isEditing: model.isEditing,
                 onReveal: revealProject,
                 onReset: model.reset,
                 onRegenerate: model.regenerateSlide,
-                onRate: model.rateProject
+                onRate: model.rateProject,
+                onToggleEditing: model.toggleEditing
             )
             Divider().overlay(DesignTokens.hairline)
             if let project = model.project {
-                PresentationWebView(project: project, onAudit: model.updateLayoutIssues)
+                PresentationWebView(
+                    project: project,
+                    isEditing: model.isEditing,
+                    onAudit: model.updateLayoutIssues,
+                    onEdit: model.applyDeckEdit
+                )
             } else {
                 PreviewPlaceholderView()
             }

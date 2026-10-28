@@ -4,10 +4,12 @@ struct PreviewToolbarView: View {
     let project: PresentationProject?
     let rating: Bool?
     let layoutIssueCount: Int
+    let isEditing: Bool
     let onReveal: () -> Void
     let onReset: () -> Void
     let onRegenerate: (Int) -> Void
     let onRate: (Bool) -> Void
+    let onToggleEditing: () -> Void
 
     var body: some View {
         HStack(spacing: DesignTokens.compactSpacing) {
@@ -21,6 +23,8 @@ struct PreviewToolbarView: View {
             }
             Spacer()
             if project != nil {
+                Button(isEditing ? "done editing" : "edit slides", systemImage: isEditing ? "checkmark" : "cursorarrow.motionlines", action: onToggleEditing)
+                    .buttonStyle(.borderedProminent)
                 if layoutIssueCount > 0 {
                     Label("\(layoutIssueCount) layout issues", systemImage: "exclamationmark.triangle")
                         .font(.caption)
