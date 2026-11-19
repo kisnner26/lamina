@@ -180,8 +180,12 @@ actor AgentPresentationGenerator {
             )
 
         case .claude:
+            // Pin a standard-context model: without --model, Claude Code may default to a
+            // 1M-context variant that requires usage credits. Override with LAMINA_CLAUDE_MODEL.
+            let model = ProcessInfo.processInfo.environment["LAMINA_CLAUDE_MODEL"] ?? "sonnet"
             let arguments = [
                 "--print",
+                "--model", model,
                 "--no-session-persistence",
                 "--permission-mode", "acceptEdits",
                 "--tools", "Read,Write,Edit",
