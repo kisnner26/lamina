@@ -56,6 +56,9 @@ actor ProcessRunner {
         value["PATH"] = (additions + [currentPath]).joined(separator: ":")
         value["TERM"] = "dumb"
         value["NO_COLOR"] = "1"
+        // Force the CLIs to use the user's logged-in subscription, never API billing.
+        value.removeValue(forKey: "ANTHROPIC_API_KEY")
+        value.removeValue(forKey: "ANTHROPIC_AUTH_TOKEN")
         return value
     }
 }
